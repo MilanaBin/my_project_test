@@ -1,0 +1,19 @@
+[project]
+name = "my_project_test"
+version = "0.0.1"
+description = "test project"
+authors = [
+    {name = "Milana", email = "vgpv.milana@gmail.com"},
+]
+dependencies = ["pip>=24.3.1"]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
