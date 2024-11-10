@@ -1,0 +1,780 @@
+databaseChangeLog:
+- changeSet:
+    id: 1730986049714-1
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: accounts_pkey
+            name: acc_no
+            type: INTEGER
+        - column:
+            name: amount
+            type: numeric
+        tableName: accounts
+- changeSet:
+    id: 1730986049714-2
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: aircraft_code
+            remarks: Aircraft code, IATA
+            type: CHAR(3)
+        - column:
+            constraints:
+              nullable: false
+            name: model
+            remarks: Aircraft model
+            type: JSONB
+        - column:
+            constraints:
+              nullable: false
+            name: range
+            type: INTEGER
+        remarks: Aircrafts (internal data)
+        tableName: aircrafts_data
+- changeSet:
+    id: 1730986049714-3
+    author: milana (generated)
+    changes:
+    - createView:
+        fullDefinition: false
+        remarks: Aircrafts
+        selectQuery: |-
+          SELECT ml.aircraft_code,
+              (ml.model ->> lang()) AS model,
+              ml.range
+             FROM aircrafts_data ml;
+        viewName: aircrafts
+- changeSet:
+    id: 1730986049714-4
+    author: milana (generated)
+    changes:
+    - createSequence:
+        cacheSize: 1
+        cycle: false
+        dataType: bigint
+        incrementBy: 1
+        maxValue: 9223372036854775807
+        minValue: 1
+        sequenceName: serial
+        startValue: 101
+- changeSet:
+    id: 1730986049714-5
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: accounts1_pkey
+            name: acc_no
+            type: INTEGER
+        - column:
+            name: amount
+            type: numeric
+        tableName: accounts1
+- changeSet:
+    id: 1730986049714-6
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: user_id
+            type: INTEGER
+        - column:
+            name: session_id
+            type: INTEGER
+        - column:
+            name: activity_date
+            type: date
+        - column:
+            name: activity_type
+            type: VARCHAR
+        tableName: activity
+- changeSet:
+    id: 1730986049714-7
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: plane_id
+            type: TEXT
+        - column:
+            name: capacity
+            type: INTEGER
+        - column:
+            name: cargo_flg
+            type: INTEGER
+        tableName: airplane
+- changeSet:
+    id: 1730986049714-8
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: channel_pkey
+            name: id_channel
+            type: SMALLINT
+        - column:
+            constraints:
+              nullable: false
+            name: name_channel
+            type: VARCHAR(100)
+        tableName: channel
+- changeSet:
+    id: 1730986049714-9
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: INTEGER
+        - column:
+            name: region_id
+            type: INTEGER
+        - column:
+            name: age
+            type: SMALLINT
+        - column:
+            name: change_dt
+            type: date
+        tableName: clients
+- changeSet:
+    id: 1730986049714-10
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: user_id
+            type: INTEGER
+        - column:
+            name: time_stamp1
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: action
+            type: VARCHAR
+        tableName: confirmations
+- changeSet:
+    id: 1730986049714-11
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: student
+            type: VARCHAR(255)
+        - column:
+            name: class
+            type: VARCHAR(255)
+        tableName: courses
+- changeSet:
+    id: 1730986049714-12
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: customer_id
+            type: INTEGER
+        - column:
+            name: product_key
+            type: INTEGER
+        tableName: customer
+- changeSet:
+    id: 1730986049714-13
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: delivery_id
+            type: INTEGER
+        - column:
+            name: customer_id
+            type: INTEGER
+        - column:
+            name: order_date
+            type: date
+        - column:
+            name: customer_pref_delivery_date
+            type: date
+        tableName: delivery
+- changeSet:
+    id: 1730986049714-14
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: id
+            type: SMALLINT
+        - column:
+            name: name
+            type: VARCHAR
+        - column:
+            name: salary
+            type: numeric(10, 3)
+        - column:
+            name: manager_id
+            type: INTEGER
+        - column:
+            name: department
+            type: VARCHAR
+        tableName: emp
+- changeSet:
+    id: 1730986049714-15
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: employee_id
+            type: INTEGER
+        - column:
+            name: name
+            type: VARCHAR(10)
+        - column:
+            name: experience_years
+            type: INTEGER
+        tableName: employee
+- changeSet:
+    id: 1730986049714-16
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: t1
+            type: INTEGER
+        - column:
+            name: t2
+            type: INTEGER
+        tableName: field1
+- changeSet:
+    id: 1730986049714-17
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: t2
+            type: INTEGER
+        tableName: field2
+- changeSet:
+    id: 1730986049714-18
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: firstkey
+            name: code
+            type: CHAR(5)
+        - column:
+            constraints:
+              nullable: false
+            name: title
+            type: VARCHAR(40)
+        - column:
+            constraints:
+              nullable: false
+            name: did
+            type: INTEGER
+        - column:
+            name: date_prod
+            type: date
+        - column:
+            name: kind
+            type: VARCHAR(10)
+        - column:
+            name: len
+            type: INTERVAL(49, 65535)(49, 65535)
+        tableName: films
+- changeSet:
+    id: 1730986049714-19
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: flight_id
+            type: TEXT
+        - column:
+            name: flight_dt
+            type: date
+        - column:
+            name: plane_id
+            type: TEXT
+        - column:
+            name: first_pilot_id
+            type: TEXT
+        - column:
+            name: second_pilot_id
+            type: TEXT
+        - column:
+            name: destination
+            type: TEXT
+        - column:
+            name: quantity
+            type: INTEGER
+        tableName: flight
+- changeSet:
+    id: 1730986049714-20
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: user_id
+            type: INTEGER
+        - column:
+            name: follower_id
+            type: INTEGER
+        tableName: followers
+- changeSet:
+    id: 1730986049714-21
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: num
+            type: INTEGER
+        tableName: mynumbers
+- changeSet:
+    id: 1730986049714-22
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: pk_opros
+            name: date_opros
+            type: date
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: pk_opros
+            name: nom_operator
+            type: SMALLINT
+        - column:
+            name: channels
+            type: VARCHAR(20)
+        tableName: opros
+- changeSet:
+    id: 1730986049714-23
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: order_id
+            type: INTEGER
+        - column:
+            name: dt
+            type: date
+        - column:
+            name: status_id
+            type: INTEGER
+        - column:
+            name: status_name
+            type: VARCHAR
+        tableName: orders
+- changeSet:
+    id: 1730986049714-24
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: pilot_id
+            type: TEXT
+        - column:
+            name: name
+            type: TEXT
+        - column:
+            name: age
+            type: INTEGER
+        - column:
+            name: rank
+            type: INTEGER
+        - column:
+            name: education_level
+            type: TEXT
+        tableName: pilot
+- changeSet:
+    id: 1730986049714-25
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: product_id
+            type: INTEGER
+        - column:
+            name: start_date
+            type: date
+        - column:
+            name: end_date
+            type: date
+        - column:
+            name: price
+            type: INTEGER
+        tableName: prices
+- changeSet:
+    id: 1730986049714-26
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: product_key
+            type: INTEGER
+        tableName: product
+- changeSet:
+    id: 1730986049714-27
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: project_id
+            type: INTEGER
+        - column:
+            name: employee_id
+            type: INTEGER
+        tableName: project
+- changeSet:
+    id: 1730986049714-28
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: query_name
+            type: VARCHAR(30)
+        - column:
+            name: result
+            type: VARCHAR(50)
+        - column:
+            name: position
+            type: INTEGER
+        - column:
+            name: rating
+            type: INTEGER
+        tableName: queries
+- changeSet:
+    id: 1730986049714-29
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: region_id
+            type: INTEGER
+        - column:
+            name: region_name
+            type: VARCHAR
+        tableName: regions
+- changeSet:
+    id: 1730986049714-30
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: contest_id
+            type: INTEGER
+        - column:
+            name: user_id
+            type: INTEGER
+        tableName: register
+- changeSet:
+    id: 1730986049714-31
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: sale_id
+            type: INTEGER
+        - column:
+            name: product_id
+            type: INTEGER
+        - column:
+            name: year
+            type: INTEGER
+        - column:
+            name: quantity
+            type: INTEGER
+        - column:
+            name: price
+            type: INTEGER
+        tableName: sales
+- changeSet:
+    id: 1730986049714-32
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: user_id
+            type: INTEGER
+        - column:
+            name: time_stamp1
+            type: TIMESTAMP WITHOUT TIME ZONE
+        tableName: signups
+- changeSet:
+    id: 1730986049714-33
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: start_dt
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: end_dt
+            type: date
+        - column:
+            name: counntry
+            type: VARCHAR(128)
+        - column:
+            name: state
+            type: VARCHAR(128)
+        - column:
+            name: city
+            type: VARCHAR(128)
+        tableName: t_client_addr
+- changeSet:
+    id: 1730986049714-34
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: client_id
+            type: BIGINT
+        - column:
+            name: start_dt
+            type: date
+        - column:
+            name: end_dt
+            type: date
+        - column:
+            name: flg_bad_end_dt
+            type: INTEGER
+        - column:
+            name: flg_intersect_period
+            type: INTEGER
+        - column:
+            name: flg_bad_sequence
+            type: INTEGER
+        tableName: t_client_addr_hist_errors
+- changeSet:
+    id: 1730986049714-35
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: start_dt
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: end_dt
+            type: date
+        - column:
+            name: grade_id
+            type: INTEGER
+        tableName: t_emp_grade
+- changeSet:
+    id: 1730986049714-36
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: start_dt
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: end_dt
+            type: date
+        - column:
+            name: position_name
+            type: VARCHAR(128)
+        - column:
+            name: position_desc
+            type: VARCHAR(512)
+        tableName: t_emp_position
+- changeSet:
+    id: 1730986049714-37
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: start_dt
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: end_dt
+            type: date
+        - column:
+            name: salary
+            type: numeric
+        tableName: t_emp_salary
+- changeSet:
+    id: 1730986049714-38
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: client_id
+            type: BIGINT
+        - column:
+            constraints:
+              nullable: false
+            name: start_dt
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: end_dt
+            type: date
+        - column:
+            name: position_name
+            type: VARCHAR(128)
+        - column:
+            name: position_desc
+            type: VARCHAR(512)
+        - column:
+            name: grade_id
+            type: INTEGER
+        - column:
+            name: salary
+            type: numeric
+        tableName: t_emp_union_hist
+- changeSet:
+    id: 1730986049714-39
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: id
+            type: INTEGER
+        - column:
+            name: country
+            type: VARCHAR(4)
+        - column:
+            name: state
+            type: BOOLEAN
+        - column:
+            name: amount
+            type: INTEGER
+        - column:
+            name: trans_date
+            type: date
+        tableName: transactions
+- changeSet:
+    id: 1730986049714-40
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: product_id
+            type: INTEGER
+        - column:
+            name: purchase_date
+            type: date
+        - column:
+            name: units
+            type: INTEGER
+        tableName: unitssold
+- changeSet:
+    id: 1730986049714-41
+    author: milana (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: user_id
+            type: INTEGER
+        - column:
+            name: user_name
+            type: VARCHAR(20)
+        tableName: users
+

@@ -4,8 +4,12 @@ version = "0.0.1"
 description = "test project"
 authors = [
     {name = "Milana", email = "vgpv.milana@gmail.com"},
+    {name = "MilanaBin", email = "vgpv.milana@gmail.com"},
 ]
-dependencies = ["pip>=24.3.1"]
+dependencies = [
+    "pip>=24.3.1",
+    "ruff>=0.7.2",
+]
 requires-python = ">=3.9"
 readme = "README.md"
 license = {text = "MIT"}
@@ -14,6 +18,10 @@ license = {text = "MIT"}
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
-
 [tool.pdm]
 distribution = true
+
+
+[tool.ruff]
+show-fixes = true
+line-length = 120
