@@ -1,18 +1,35 @@
-stages:
-  - pre-migration - migration
-pre_migration:
-  stage: pre-migration
-  image: python:3.9
-  script:
-    - pip install psycopg2
-    - python src/my_project_test/test_script.py
-      src/my_project_test/migration_script.sql
-  only:
-    - main
-migration:
-  stage: migration
-  image: liquibase/liquibase:latest
-  script:
-    - liquibase update
-  only:
-    - main
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pre_migration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install psycopg2
+
+      - name: Run test script
+        run: |
+          python3 src/my_project_test/test_script.py src/my_project_test/migration_script.sql
+
+  migration:
+    runs-on: ubuntu-latest
+    needs: pre_migration
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run Liquibase migration
+        uses: liquibase/liquibase-action@v2
+        with:
+          args: update
