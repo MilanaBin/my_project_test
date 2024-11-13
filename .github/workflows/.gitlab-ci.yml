@@ -1,22 +1,18 @@
-name: Run tests
-on: [push]
-jobs:
-  tests:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-    - name: Check out
-      uses: actions/checkout@v4
-    - name: Setup PDM
-      uses: pdm-project/setup-pdm@v4
-      with:
-        python-version: 3.9
-        cache: true
-
-    - name: Install tools
-      run: pdm install
-
-    - name: Run tests
-      run: python3 tests/test_task.py
-      env:
-        PYTHONPATH: .
+stages:
+  - pre-migration - migration
+pre_migration:
+  stage: pre-migration
+  image: python:3.9
+  script:
+    - pip install psycopg2
+    - python src/my_project_test/test_script.py
+      src/my_project_test/migration_script.sql
+  only:
+    - main
+migration:
+  stage: migration
+  image: liquibase/liquibase:latest
+  script:
+    - liquibase update
+  only:
+    - main
