@@ -5,5 +5,5 @@ CREATE TABLE bookings.airports_data (
 	city jsonb NOT NULL,
 	coordinates point NOT NULL,
 	timezone varchar NOT NULL,
-    load_date date NULL
+    load_date date null
 );
