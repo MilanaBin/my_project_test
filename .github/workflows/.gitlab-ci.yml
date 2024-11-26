@@ -71,4 +71,7 @@ jobs:
             -e LIQUIBASE_PASSWORD=$LIQUIBASE_PASSWORD \
             -e LIQUIBASE_URL=$LIQUIBASE_URL \
             liquibase/liquibase \
+            --url=$LIQUIBASE_URL \
+            --username=$LIQUIBASE_USERNAME \
+            --password=$LIQUIBASE_PASSWORD \
             --changeLogFile=/liquibase/changelog/example-changelog.sql update
