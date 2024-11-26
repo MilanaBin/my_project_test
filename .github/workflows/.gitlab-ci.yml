@@ -1,6 +1,5 @@
 name: CI Pipeline
 
-
 on:
   push:
     branches:
@@ -44,9 +43,9 @@ jobs:
     needs: pre_migration
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Run Liquibase migration
-        uses: liquibase/liquibase-action@v2
+        uses: liquibase/liquibase-github-action@v4.23.0
         with:
           args: update
