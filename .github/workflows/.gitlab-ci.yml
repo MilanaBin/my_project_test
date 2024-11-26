@@ -14,11 +14,11 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mydb
         options: >-
-          --health-cmd "pg_isready -U ${{ secrets.DB_USER }}"
+          --health-cmd "pg_isready -U postgres"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -32,7 +32,7 @@ jobs:
       - name: Wait for Postgres to be ready
         run: |
           for i in {1..10}; do
-            if pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }}; then
+            if pg_isready -h localhost -p 5432 -U postgres; then
               echo "Postgres is ready!";
               break;
             fi;
@@ -60,11 +60,15 @@ jobs:
 
       # Шаг: Выполнение миграции через Liquibase с использованием Docker
       - name: Run Liquibase migration using Docker
+        env:
+          LIQUIBASE_USERNAME: ${{ secrets.DB_USER }}
+          LIQUIBASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          LIQUIBASE_URL: jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}
         run: |
           docker run --rm \
             -v $(pwd):/liquibase/changelog \
-            -e LIQUIBASE_USERNAME=${{ secrets.DB_USER }} \
-            -e LIQUIBASE_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e LIQUIBASE_URL=jdbc:postgresql://host.docker.internal:5432/${{ secrets.DB_NAME }} \
+            -e LIQUIBASE_USERNAME=$LIQUIBASE_USERNAME \
+            -e LIQUIBASE_PASSWORD=$LIQUIBASE_PASSWORD \
+            -e LIQUIBASE_URL=$LIQUIBASE_URL \
             -e LIQUIBASE_CHANGELOG_FILE=/liquibase/changelog/changelog.xml \
             liquibase/liquibase update
