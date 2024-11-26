@@ -66,8 +66,9 @@ jobs:
           LIQUIBASE_URL: jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}
         run: |
           docker run --rm \
-            -v $(pwd):/liquibase/changelog \
+            -v $(pwd)/my_project_test:/liquibase/changelog \
             -e LIQUIBASE_USERNAME=$LIQUIBASE_USERNAME \
             -e LIQUIBASE_PASSWORD=$LIQUIBASE_PASSWORD \
             -e LIQUIBASE_URL=$LIQUIBASE_URL \
-            liquibase/liquibase update
+            liquibase/liquibase \
+            --changeLogFile=/liquibase/changelog/example-changelog.sql update
