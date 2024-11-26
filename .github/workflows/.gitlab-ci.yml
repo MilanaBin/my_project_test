@@ -45,6 +45,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Run Liquibase in Docker
+        run: |
+          docker run --rm \
+            -v $(pwd):/liquibase/changelog \
+            -e LIQUIBASE_USERNAME=${{ secrets.DB_USER }} \
+            -e LIQUIBASE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e LIQUIBASE_URL=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }} \
+            liquibase/liquibase update
+
       - name: Run Liquibase migration
         uses: liquibase/liquibase-github-action@v4.23.0
         with:
