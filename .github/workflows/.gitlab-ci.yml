@@ -70,5 +70,4 @@ jobs:
             -e LIQUIBASE_USERNAME=$LIQUIBASE_USERNAME \
             -e LIQUIBASE_PASSWORD=$LIQUIBASE_PASSWORD \
             -e LIQUIBASE_URL=$LIQUIBASE_URL \
-            -e LIQUIBASE_CHANGELOG_FILE=/liquibase/changelog/changelog.xml \
             liquibase/liquibase update
