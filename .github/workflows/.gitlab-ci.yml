@@ -30,7 +30,7 @@ jobs:
 
       - name: Run test script
         env:
-          DB_HOST: postgres
+          DB_HOST: postgres  
           DB_PORT: 5432
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
