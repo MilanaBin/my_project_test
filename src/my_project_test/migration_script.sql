@@ -1,4 +1,4 @@
-
+--<keep_data>
 CREATE TABLE bookings.airports_data (
 	airport_code bpchar(3) NOT NULL,
 	airport_name jsonb NOT NULL,
