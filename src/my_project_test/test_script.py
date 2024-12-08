@@ -1,7 +1,14 @@
 import psycopg2
 import re
 
-DB_CONFIG = {"host": "localhost", "dbname": "postgres", "user": "postgres", "password": "11111", "port": 5432}
+DB_CONFIG = {
+    "host": "localhost",
+    "dbname": "postgres",
+    "user": "postgres",
+    "password": "11111",
+    "port": 5432,
+    "options": "-c search_path=bookings",
+}
 
 
 def execute_query(connection, query, params=None):

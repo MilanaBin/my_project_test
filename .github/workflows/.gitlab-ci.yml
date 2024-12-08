@@ -14,9 +14,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 11111
+          POSTGRES_DB: postgres
 
     steps:
       - name: Checkout repository
@@ -25,16 +25,21 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip
+          sudo apt-get install -y python3-pip libpq-dev
           pip3 install psycopg2
+
+      - name: Create bookings schema
+        run: |
+          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h localhost -U postgres -d postgres
+        env:
+          PGPASSWORD: 11111
 
       - name: Run test script
         env:
-          DB_HOST: localhost  
+          DB_HOST: localhost
           DB_PORT: 5432
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: postgres
+          DB_PASSWORD: 11111
+          DB_NAME: postgres
         run: |
           python3 src/my_project_test/test_script.py src/my_project_test/migration_script.sql
-
