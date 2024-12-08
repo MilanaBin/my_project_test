@@ -30,13 +30,11 @@ jobs:
 
       - name: Run test script
         env:
-          DB_HOST: localhost  # Имя хоста контейнера PostgreSQL
+          DB_HOST: localhost  
           DB_PORT: 5432
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          python3 src/my_project_test/test_script.py 
-          
-        # src/my_project_test/migration_script.sql
+          python3 src/my_project_test/test_script.py src/my_project_test/migration_script.sql
 
