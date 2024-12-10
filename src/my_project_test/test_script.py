@@ -46,7 +46,7 @@ if __name__ == "__main__":
         "host": "localhost",
         "dbname": "postgres",
         "user": "postgres",
-        "password": "your_password",
+        "password": "11111",
         "port": 5432,
     }
 
