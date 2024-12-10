@@ -1,4 +1,4 @@
-name: CI Pipeline for Local Database
+name: CI Pipeline
 
 on:
   push:
@@ -8,13 +8,15 @@ on:
 jobs:
   pre_migration:
     runs-on: ubuntu-latest
-
-    env:  # Объявляем переменные окружения глобально для всех шагов
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: 11111
-      DB_NAME: postgres
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
 
     steps:
       - name: Checkout repository
@@ -23,27 +25,16 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip libpq-dev
-          pip3 install psycopg2-binary
-
-      - name: Verify connection to local database
-        run: |
-          psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT inet_server_addr(), inet_client_addr(), current_database(), current_user;"
-        env:
-          PGPASSWORD: $DB_PASSWORD
-
-      - name: Create bookings schema
-        run: |
-          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h $DB_HOST -U $DB_USER -d $DB_NAME
-        env:
-          PGPASSWORD: $DB_PASSWORD
+          sudo apt-get install -y python3-pip
+          pip3 install psycopg2
 
       - name: Run test script
-        run: |
-          python3 src/my_project_test/test_script.py
-
-      - name: Verify created tables
-        run: |
-          psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "\dt bookings.*"
         env:
-          PGPASSWORD: $DB_PASSWORD
+          DB_HOST: localhost  
+          DB_PORT: 5432
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          python3 src/my_project_test/test_script.py 
+
