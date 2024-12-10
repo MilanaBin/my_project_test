@@ -30,13 +30,13 @@ jobs:
 
       - name: Create bookings schema
         run: |
-          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h postgres -U postgres -d postgres
+          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h localhost -U postgres -d postgres
         env:
           PGPASSWORD: 11111
 
       - name: Run test script
         env:
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_PORT: 5432
           DB_USER: postgres
           DB_PASSWORD: 11111
@@ -46,6 +46,6 @@ jobs:
 
       - name: Check database structure
         run: |
-          psql -h postgres -U $DB_USER -d $DB_NAME -c "\dt bookings.*"
+          psql -h localhost -U $DB_USER -d $DB_NAME -c "\dt bookings.*"
         env:
           PGPASSWORD: $DB_PASSWORD
