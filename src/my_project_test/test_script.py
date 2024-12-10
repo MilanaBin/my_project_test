@@ -2,6 +2,19 @@ import psycopg2
 from psycopg2 import sql
 
 
+def check_connection(connection):
+    """
+    Проверяет текущее соединение и выводит базу данных и пользователя.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT current_database(), current_user;")
+            db_info = cursor.fetchone()
+            print(f"Подключено к базе данных: {db_info[0]} под пользователем: {db_info[1]}")
+    except Exception as e:
+        print(f"Ошибка проверки подключения: {e}")
+
+
 def create_table(host, dbname, user, password, port, table_name, columns):
     """
     Создает таблицу в схеме bookings базы данных PostgreSQL.
@@ -18,6 +31,9 @@ def create_table(host, dbname, user, password, port, table_name, columns):
     try:
         # Устанавливаем соединение с базой данных
         connection = psycopg2.connect(host=host, dbname=dbname, user=user, password=password, port=port)
+
+        # Проверяем соединение
+        check_connection(connection)
 
         # Создаем курсор
         cursor = connection.cursor()
