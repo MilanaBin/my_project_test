@@ -25,21 +25,27 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip libpq-dev
-          pip3 install psycopg2
+          sudo apt-get install -y python3-pip
+          pip3 install psycopg2-binary
 
       - name: Create bookings schema
         run: |
-          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h localhost -U postgres -d postgres
+          echo "CREATE SCHEMA IF NOT EXISTS bookings;" | psql -h postgres -U postgres -d postgres
         env:
           PGPASSWORD: 11111
 
       - name: Run test script
         env:
-          DB_HOST: localhost
+          DB_HOST: postgres
           DB_PORT: 5432
           DB_USER: postgres
           DB_PASSWORD: 11111
           DB_NAME: postgres
         run: |
-          python3 src/my_project_test/test_script.py 
+          python3 src/my_project_test/test_script.py
+
+      - name: Check database structure
+        run: |
+          psql -h postgres -U $DB_USER -d $DB_NAME -c "\dt bookings.*"
+        env:
+          PGPASSWORD: $DB_PASSWORD
