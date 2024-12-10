@@ -42,4 +42,4 @@ jobs:
           DB_PASSWORD: 11111
           DB_NAME: postgres
         run: |
-          python3 src/my_project_test/test_script.py src/my_project_test/migration_script.sql
+          python3 src/my_project_test/test_script.py 

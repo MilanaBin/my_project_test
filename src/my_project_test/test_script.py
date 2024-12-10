@@ -1,107 +1,66 @@
 import psycopg2
-import re
-
-DB_CONFIG = {
-    "host": "localhost",
-    "dbname": "postgres",
-    "user": "postgres",
-    "password": "11111",
-    "port": 5432,
-    "options": "-c search_path=bookings",
-}
+from psycopg2 import sql
 
 
-def execute_query(connection, query, params=None):
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute(query, params)
-            connection.commit()
-            print(f"Выполнен запрос: {query}")
-    except Exception as e:
-        print(f"Ошибка выполнения запроса: {query}\nОшибка: {e}")
-        raise
-
-
-def get_columns(connection, table_name):
-    query = """
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_schema = %s AND table_name = %s
-        ORDER BY ordinal_position
+def create_table(host, dbname, user, password, port, table_name, columns):
     """
-    schema, table = table_name.split(".")
-    with connection.cursor() as cursor:
-        cursor.execute(query, (schema, table))
-        return [row[0] for row in cursor.fetchall()]
+    Создает таблицу в схеме bookings базы данных PostgreSQL.
 
-
-def recreate_table_with_keep_data(connection, table_name, new_table_ddl):
-    schema, original_table_name = table_name.split(".")
-    temp_table_name = f"{original_table_name}_2"
-    temp_full_name = f"{schema}.{temp_table_name}"
-
-    # Создание временной таблицы
-    create_temp_table_query = new_table_ddl.replace(table_name, temp_full_name)
-    execute_query(connection, create_temp_table_query)
-    print(f"Создана временная таблица {temp_full_name}")
-
-    # Получение списка колонок
-    old_columns = get_columns(connection, table_name)
-    new_columns = get_columns(connection, temp_full_name)
-
-    # Найти пересечение столбцов
-    common_columns = set(old_columns) & set(new_columns)
-    if not common_columns:
-        raise ValueError("Нет общих колонок между старой и новой таблицами!")
-
-    common_columns = list(common_columns)
-    column_list = ", ".join(common_columns)
-
-    # Копирование данных
-    insert_data_query = f"""
-        INSERT INTO {temp_full_name} ({column_list})
-        SELECT {column_list} FROM {table_name}
+    :param host: Хост базы данных
+    :param dbname: Имя базы данных
+    :param user: Имя пользователя базы данных
+    :param password: Пароль пользователя
+    :param port: Порт для подключения к базе данных
+    :param table_name: Имя таблицы, которую нужно создать (без указания схемы)
+    :param columns: Список столбцов с их типами данных (например: ["id SERIAL PRIMARY KEY", "name VARCHAR(255)"])
     """
-    execute_query(connection, insert_data_query)
-    print(f"Данные скопированы из {table_name} в {temp_full_name}")
-
-    # Удаление старой таблицы
-    drop_old_table_query = f"DROP TABLE {table_name} CASCADE"
-    execute_query(connection, drop_old_table_query)
-    print(f"Таблица {table_name} удалена с CASCADE")
-
-    # Переименование временной таблицы
-    rename_table_query = f"ALTER TABLE {temp_full_name} RENAME TO {original_table_name}"
-    execute_query(connection, rename_table_query)
-    print(f"Таблица {temp_full_name} переименована в {table_name}")
-
-    # Восстановление зависимостей
-    restore_dependencies_query = f"SELECT bookings.restore_dependencies('{table_name}')"
-    execute_query(connection, restore_dependencies_query)
-    print(f"Зависимости для {table_name} восстановлены")
-
-
-def process_sql_file(file_path):
+    connection = None
     try:
-        with open(file_path, "r") as file:
-            sql_content = file.read()
+        # Устанавливаем соединение с базой данных
+        connection = psycopg2.connect(host=host, dbname=dbname, user=user, password=password, port=port)
 
-        if "--<keep_data>" in sql_content:
-            table_name_match = re.search(r"CREATE\s+TABLE\s+(\w+\.\w+)\s*\(", sql_content, re.IGNORECASE | re.DOTALL)
-            if table_name_match:
-                table_name = table_name_match.group(1)
-                print(f"Обнаружена таблица для пересоздания: {table_name}")
+        # Создаем курсор
+        cursor = connection.cursor()
 
-                # Соединение с базой данных
-                with psycopg2.connect(**DB_CONFIG) as conn:
-                    recreate_table_with_keep_data(conn, table_name, sql_content)
-            else:
-                print("Не удалось определить имя таблицы в SQL-файле.")
-        else:
-            print("Тег --<keep_data> не найден в файле.")
+        # Формируем SQL-запрос для создания таблицы
+        create_table_query = sql.SQL(
+            """
+            CREATE TABLE IF NOT EXISTS bookings.{table_name} (
+                {columns}
+            )
+            """
+        ).format(
+            table_name=sql.Identifier(table_name), columns=sql.SQL(",").join(sql.SQL(column) for column in columns)
+        )
+
+        # Выполняем запрос
+        cursor.execute(create_table_query)
+        connection.commit()
+        print(f"Таблица bookings.{table_name} успешно создана.")
+
     except Exception as e:
-        print(f"Ошибка обработки файла {file_path}: {e}")
+        print(f"Ошибка при создании таблицы: {e}")
+
+    finally:
+        # Закрываем соединение
+        if connection:
+            cursor.close()
+            connection.close()
 
 
-# Путь к SQL-файлу для тестирования
-process_sql_file("src/my_project_test/migration_script.sql")
+# Пример использования
+if __name__ == "__main__":
+    db_config = {"host": "localhost", "dbname": "postgres", "user": "postgres", "password": "11111", "port": 5432}
+
+    table_name = "example_table"
+    columns = ["id SERIAL PRIMARY KEY", "name VARCHAR(255) NOT NULL", "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"]
+
+    create_table(
+        host=db_config["host"],
+        dbname=db_config["dbname"],
+        user=db_config["user"],
+        password=db_config["password"],
+        port=db_config["port"],
+        table_name=table_name,
+        columns=columns,
+    )
