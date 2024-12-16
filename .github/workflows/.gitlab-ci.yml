@@ -26,10 +26,12 @@ jobs:
           sudo apt-get install -y python3-pip libpq-dev
           pip3 install psycopg2-binary
 
-      - name: before_script
+      - name: Wait for PostgreSQL to be ready
         run: |
-          pip install psycopg2
-          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do echo "Waiting for PostgreSQL..."; sleep 2; done
+          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
       - name: Run test script
         run: |
