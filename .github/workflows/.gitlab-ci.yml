@@ -50,4 +50,4 @@ jobs:
 
       - name: Run test script
         run: |
-          python3 src/my_project_test/test_connection.py
+          python3 src/my_project_test/test_script.py
