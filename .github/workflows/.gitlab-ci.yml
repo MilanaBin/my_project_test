@@ -1,4 +1,4 @@
-name: CI Pipeline for PostgreSQL with Docker
+name: CI Pipeline for Local Database
 
 on:
   push:
@@ -9,24 +9,9 @@ jobs:
   pre_migration:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest  # Используем образ PostgreSQL
-        ports:
-          - 5432:5432  # Открываем порт 5432 для подключения
-        env:
-          POSTGRES_USER: postgres  # Устанавливаем пользователя
-          POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
-          POSTGRES_DB: postgres  # Устанавливаем имя базы данных
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=5
-
-    env:
-      DB_HOST: 127.0.0.1
-      DB_PORT: 5432
+    env:  # Объявляем переменные окружения глобально для всех шагов
+      DB_HOST: localhost
+      DB_PORT: 5433  # Изменено с 5432 на 5433
       DB_USER: postgres
       DB_PASSWORD: 11111
       DB_NAME: postgres
@@ -44,10 +29,10 @@ jobs:
       - name: Wait for PostgreSQL to be ready
         run: |
           until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
-            echo "Waiting for PostgreSQL..."
+            echo "Waiting for PostgreSQL on port $DB_PORT..."
             sleep 2
           done
 
       - name: Run test script
         run: |
-          python3 src/my_project_test/test_script.py
+          python3 src/my_project_test/test_connection.py
