@@ -47,7 +47,7 @@ if __name__ == "__main__":
         "dbname": "postgres",
         "user": "postgres",
         "password": "11111",
-        "port": 5432,
+        "port": 5433,
     }
 
     table_name = "example_table"
