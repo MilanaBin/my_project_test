@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI Pipeline for Local Database
 
 on:
   push:
@@ -8,15 +8,13 @@ on:
 jobs:
   pre_migration:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+
+    env:  # Объявляем переменные окружения глобально для всех шагов
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: 11111
+      DB_NAME: postgres
 
     steps:
       - name: Checkout repository
@@ -25,16 +23,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip
-          pip3 install psycopg2
+          sudo apt-get install -y python3-pip libpq-dev
+          pip3 install psycopg2-binary
+
+      - name: Verify connection to local database
+        run: |
+          psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT inet_server_addr(), inet_client_addr(), current_database(), current_user;"
+        env:
+          PGPASSWORD: $DB_PASSWORD
 
       - name: Run test script
-        env:
-          DB_HOST: localhost  
-          DB_PORT: 5432
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
         run: |
-          python3 src/my_project_test/test_script.py 
-
+          python3 src/my_project_test/test_connection.py
