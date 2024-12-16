@@ -1,4 +1,4 @@
-name: CI Pipeline for PostgreSQL with SSH
+name: CI Pipeline for PostgreSQL with Docker
 
 on:
   push:
@@ -9,13 +9,27 @@ jobs:
   pre_migration:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest  # Используем образ PostgreSQL
+        ports:
+          - 5432:5432  # Открываем порт 5432 для подключения
+        env:
+          POSTGRES_USER: postgres  # Устанавливаем пользователя
+          POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
+          POSTGRES_DB: postgres  # Устанавливаем имя базы данных
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
     env:
-      DB_HOST: localhost  # Указание хоста базы данных
-      DB_PORT: 5432       # Порт для подключения
-      DB_USER: postgres    # Пользователь базы данных
-      DB_PASSWORD: 11111   # Пароль пользователя базы данных
-      DB_NAME: postgres    # Имя базы данных
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH-ключ для подключения к серверу
+      DB_HOST: postgres  # Используем имя сервиса как хост
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: 11111
+      DB_NAME: postgres
 
     steps:
       - name: Checkout repository
@@ -24,31 +38,22 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip libpq-dev ssh
+          sudo apt-get install -y python3-pip libpq-dev
           pip3 install psycopg2-binary
-
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/suXIq1uCyFPerE7I1YiumsfS4oLznvj14IOUzXo4pilpa/eZ8REjTZnz7Pp/zBqsnGoGeTwwj3a0BJFD1IDDCwXAda0Bkp0M2ygyDWAd5gY5wD0Hrz6F69C7lmt7ntlLoXqk4a+WF1QfnUYg+mIY3MNu36R12HGeaOB4kxsPtT9RMrD3FcNqeCr9BamgxUfpNT2V8tRNbd507uU93+riGreYeTq09ZA5PHFH8IACPfeuZbz+W39pO92X9SdYfOZaiIj1zAH9Kp4eM+AApbwu/PSTnMzK6xmHPhuDEvOrn0aAcl3HbGwgc+lHxu9m/ifJQSi6vTfp3Jez+Xjcf+F9owIbFEFbkb+3sUyoIIyYGFZN6xmdhsjcUarJrazGRvBLPziL+MeNTKil8BH1E+l7zMNfQTdXY1WauyO5NhgcZCbZSg3u6mAwSGZEwPfYqlzeNhJ5ONaoVio0zFmbMJG09WkQgfICntL1/5xCDHbM+GPC3zPYtNpJ/VNSM5MjXIc=" >> ~/.ssh/known_hosts
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Wait for PostgreSQL to be ready
         run: |
-            until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
-              echo "Waiting for PostgreSQL..."
-              sleep 2
-            done
-  
+          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
+
       - name: Run test script
         run: |
-            python3 src/my_project_test/test_script.py
+          python3 src/my_project_test/test_script.py
         env:
-            DB_HOST: localhost
-            DB_PORT: 5432
-            DB_USER: postgres
-            DB_PASSWORD: 11111
-            DB_NAME: postgres
+          DB_HOST: ${{ env.DB_HOST }}
+          DB_PORT: ${{ env.DB_PORT }}
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_NAME: ${{ env.DB_NAME }}
