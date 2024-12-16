@@ -1,4 +1,4 @@
-name: CI Pipeline for PostgreSQL without Docker
+name: CI Pipeline for PostgreSQL with Docker
 
 on:
   push:
@@ -6,12 +6,27 @@ on:
       - main
 
 jobs:
-  pre_migration: 
-    runs-on: ubuntu-latest  # Используем стандартный Ubuntu агент
+  pre_migration:
+    runs-on: ubuntu-latest
 
-    env:  # Объявляем переменные окружения глобально для всех шагов
+    services:
+      postgres:
+        image: postgres:latest  # Используем образ PostgreSQL
+        ports:
+          - 5432:5432  # Открываем порт 5432 для подключения
+        env:
+          POSTGRES_USER: postgres  # Устанавливаем пользователя
+          POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
+          POSTGRES_DB: postgres  # Устанавливаем имя базы данных
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
       DB_HOST: localhost
-      DB_PORT: 5433  # Указываем порт PostgreSQL, который у вас настроен
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 11111
       DB_NAME: postgres
@@ -25,6 +40,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-pip libpq-dev
           pip3 install psycopg2-binary
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
+            echo "Waiting for PostgreSQL..."
+            sleep 2
+          done
 
       - name: Run test script
         run: |

@@ -47,21 +47,11 @@ if __name__ == "__main__":
         "dbname": "postgres",
         "user": "postgres",
         "password": "11111",
-        "port": 5433,
+        "port": 5432,
     }
 
     table_name = "example_table"
     columns = ["id SERIAL PRIMARY KEY", "name VARCHAR(255) NOT NULL", "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"]
-
-    import socket
-
-# Debugging connection details
-print(f"Trying to connect to {db_config['host']}:{db_config['port']} as {db_config['user']}")
-try:
-    socket.create_connection((db_config["host"], db_config["port"]), timeout=5)
-    print("Port is reachable.")
-except Exception as e:
-    print(f"Error: Cannot reach {db_config['host']}:{db_config['port']} - {e}")
 
     create_table(
         host=db_config["host"],
