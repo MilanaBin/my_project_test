@@ -13,7 +13,7 @@ jobs:
       postgres:
         image: postgres:latest  # Используем образ PostgreSQL
         ports:
-          - 5433:5433  # Открываем порт 5432 для подключения
+          - 5432:5433  # Открываем порт 5432 для подключения
         env:
           POSTGRES_USER: postgres  # Устанавливаем пользователя
           POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
