@@ -48,6 +48,11 @@ jobs:
             sleep 2
           done
 
+      - name: Get container ID and print it
+        run: |
+          container_id=$(docker ps -q -f "ancestor=postgres:latest")
+          echo "PostgreSQL container ID: $container_id"
+
       - name: Run test script
         run: |
           python3 src/my_project_test/test_script.py
