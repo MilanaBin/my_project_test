@@ -32,11 +32,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H milana@Air-Milana >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
+          ssh-keyscan -H 192.168.8.87 >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
 
       - name: Create SSH tunnel and wait for PostgreSQL
         run: |
-          ssh -N -L 5432:localhost:5432 milana@Air-Milana &  # Создаем туннель для подключения
+          ssh -N -L 5432:localhost:5432 milana@192.168.8.87 &  # Создаем туннель для подключения
           sleep 5  # Даём время на установку туннеля
 
       - name: Wait for PostgreSQL to be ready
