@@ -11,7 +11,7 @@ jobs:
 
     env:  # Объявляем переменные окружения глобально для всех шагов
       DB_HOST: localhost
-      DB_PORT: 5433
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 11111
       DB_NAME: postgres
