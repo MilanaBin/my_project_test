@@ -48,10 +48,11 @@ jobs:
             sleep 2
           done
 
-      - name: Get container ID and print it
+      - name: Print container logs
         run: |
-          container_id=$(docker ps -q -f "ancestor=postgres:latest")
+          container_id=$(docker ps -a -q -f "ancestor=postgres:latest")
           echo "PostgreSQL container ID: $container_id"
+          docker logs $container_id
 
       - name: Run test script
         run: |
