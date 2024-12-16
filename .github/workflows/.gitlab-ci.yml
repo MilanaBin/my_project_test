@@ -18,6 +18,8 @@ jobs:
           POSTGRES_USER: postgres  # Устанавливаем пользователя
           POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
           POSTGRES_DB: postgres  # Устанавливаем имя базы данных
+        volumes:  # Добавляем volume для сохранения данных локально
+          - ./data:/var/lib/postgresql/data  # Данные PostgreSQL сохраняются в папке ./data
         options: >-
           --health-cmd="pg_isready -U postgres"
           --health-interval=5s
@@ -25,7 +27,7 @@ jobs:
           --health-retries=5
 
     env:
-      DB_HOST: localhost
+      DB_HOST: postgres  # Используем имя сервиса PostgreSQL
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 11111
@@ -51,3 +53,10 @@ jobs:
       - name: Run test script
         run: |
           python3 src/my_project_test/test_script.py
+
+      - name: Verify PostgreSQL connection
+        run: |
+          PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c '\dt'
+
+      - name: Display PostgreSQL logs
+        run: docker logs $(docker ps -q --filter "ancestor=postgres:latest")
