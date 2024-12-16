@@ -25,7 +25,7 @@ jobs:
           --health-retries=5
 
     env:
-      DB_HOST: postgres  # Используем имя сервиса как хост
+      DB_HOST: localhost
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 11111
@@ -51,9 +51,3 @@ jobs:
       - name: Run test script
         run: |
           python3 src/my_project_test/test_script.py
-        env:
-          DB_HOST: ${{ env.DB_HOST }}
-          DB_PORT: ${{ env.DB_PORT }}
-          DB_USER: ${{ env.DB_USER }}
-          DB_PASSWORD: ${{ env.DB_PASSWORD }}
-          DB_NAME: ${{ env.DB_NAME }}
