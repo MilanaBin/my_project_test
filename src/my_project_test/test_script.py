@@ -23,7 +23,7 @@ def create_table(host, dbname, user, password, port, table_name, columns):
         with connection.cursor() as cursor:
             create_table_query = sql.SQL(
                 """
-                CREATE TABLE IF NOT EXISTS bookings.{table_name} (
+                CREATE TABLE IF NOT EXISTS {table_name} (
                     {columns}
                 )
                 """
@@ -32,7 +32,7 @@ def create_table(host, dbname, user, password, port, table_name, columns):
             )
             cursor.execute(create_table_query)
             connection.commit()
-            print(f"Table bookings.{table_name} created successfully.")
+            print(f"Table {table_name} created successfully.")
 
     except Exception as e:
         print(f"Error creating table: {e}")
