@@ -32,7 +32,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H your-remote-server.com >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
+          ssh-keyscan -H 192.168.8.87 >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
 
       - name: Create SSH tunnel and wait for PostgreSQL
         run: |
