@@ -4,7 +4,8 @@ CREATE TABLE bookings.airports_data (
 	airport_name jsonb NOT NULL,
 	city jsonb NOT NULL,
 	coordinates point NOT NULL,
-	timezone varchar NOT NULL
+	timezone varchar NOT NULL,
+	dt date NULL
 );
 
 COMMENT ON TABLE bookings.airports_data IS 'Данные об аэропортах, включая код, название, город, координаты и часовой пояс';
