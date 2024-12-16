@@ -36,18 +36,19 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Create SSH tunnel and wait for PostgreSQL
-        run: |
-          ssh -N -L 5432:localhost:5432 user@your-remote-server.com &  # Создаем туннель для подключения
-          sleep 5  # Даём время на установку туннеля
-
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
-
+            until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do
+              echo "Waiting for PostgreSQL..."
+              sleep 2
+            done
+  
       - name: Run test script
         run: |
-          python3 src/my_project_test/test_connection.py
+            python3 src/my_project_test/test_script.py
+        env:
+            DB_HOST: localhost
+            DB_PORT: 5432
+            DB_USER: postgres
+            DB_PASSWORD: 11111
+            DB_NAME: postgres
