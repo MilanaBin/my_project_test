@@ -32,7 +32,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 192.168.8.87 >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/suXIq1uCyFPerE7I1YiumsfS4oLznvj14IOUzXo4pilpa/eZ8REjTZnz7Pp/zBqsnGoGeTwwj3a0BJFD1IDDCwXAda0Bkp0M2ygyDWAd5gY5wD0Hrz6F69C7lmt7ntlLoXqk4a+WF1QfnUYg+mIY3MNu36R12HGeaOB4kxsPtT9RMrD3FcNqeCr9BamgxUfpNT2V8tRNbd507uU93+riGreYeTq09ZA5PHFH8IACPfeuZbz+W39pO92X9SdYfOZaiIj1zAH9Kp4eM+AApbwu/PSTnMzK6xmHPhuDEvOrn0aAcl3HbGwgc+lHxu9m/ifJQSi6vTfp3Jez+Xjcf+F9owIbFEFbkb+3sUyoIIyYGFZN6xmdhsjcUarJrazGRvBLPziL+MeNTKil8BH1E+l7zMNfQTdXY1WauyO5NhgcZCbZSg3u6mAwSGZEwPfYqlzeNhJ5ONaoVio0zFmbMJG09WkQgfICntL1/5xCDHbM+GPC3zPYtNpJ/VNSM5MjXIc=" >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Create SSH tunnel and wait for PostgreSQL
         run: |
