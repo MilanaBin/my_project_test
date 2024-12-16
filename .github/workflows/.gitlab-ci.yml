@@ -26,12 +26,6 @@ jobs:
           sudo apt-get install -y python3-pip libpq-dev
           pip3 install psycopg2-binary
 
-      - name: Verify connection to local database
-        run: |
-          psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT inet_server_addr(), inet_client_addr(), current_database(), current_user;"
-        env:
-          PGPASSWORD: $DB_PASSWORD
-
       - name: Run test script
         run: |
           python3 src/my_project_test/test_connection.py
