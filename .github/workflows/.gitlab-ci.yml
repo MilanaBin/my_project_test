@@ -1,4 +1,4 @@
-name: CI Pipeline for PostgreSQL with Docker
+name: CI Pipeline for PostgreSQL with SSH
 
 on:
   push:
@@ -9,27 +9,13 @@ jobs:
   pre_migration:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest  # Используем образ PostgreSQL
-        ports:
-          - 5432:5432  # Открываем порт 5432 для подключения
-        env:
-          POSTGRES_USER: postgres  # Устанавливаем пользователя
-          POSTGRES_PASSWORD: 11111  # Устанавливаем пароль
-          POSTGRES_DB: postgres  # Устанавливаем имя базы данных
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=5s
-          --health-timeout=5s
-          --health-retries=5
-
     env:
-      DB_HOST: localhost
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: 11111
-      DB_NAME: postgres
+      DB_HOST: localhost  # Указание хоста базы данных
+      DB_PORT: 5432       # Порт для подключения
+      DB_USER: postgres    # Пользователь базы данных
+      DB_PASSWORD: 11111   # Пароль пользователя базы данных
+      DB_NAME: postgres    # Имя базы данных
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH-ключ для подключения к серверу
 
     steps:
       - name: Checkout repository
@@ -38,8 +24,20 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip libpq-dev
+          sudo apt-get install -y python3-pip libpq-dev ssh
           pip3 install psycopg2-binary
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H milana@Air-Milana >> ~/.ssh/known_hosts  # Добавление сервера в доверенные хосты
+
+      - name: Create SSH tunnel and wait for PostgreSQL
+        run: |
+          ssh -N -L 5432:localhost:5432 milana@Air-Milana &  # Создаем туннель для подключения
+          sleep 5  # Даём время на установку туннеля
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -50,4 +48,4 @@ jobs:
 
       - name: Run test script
         run: |
-          python3 src/my_project_test/test_script.py
+          python3 src/my_project_test/test_connection.py
