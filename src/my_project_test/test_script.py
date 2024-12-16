@@ -1,5 +1,6 @@
 import psycopg2
 from psycopg2 import sql
+import os
 
 
 def check_connection(connection):
@@ -43,11 +44,11 @@ def create_table(host, dbname, user, password, port, table_name, columns):
 
 if __name__ == "__main__":
     db_config = {
-        "host": "localhost",
-        "dbname": "postgres",
-        "user": "postgres",
-        "password": "11111",
-        "port": 5432,
+        "host": os.getenv("DB_HOST", "localhost"),
+        "dbname": os.getenv("DB_NAME", "postgres"),
+        "user": os.getenv("DB_USER", "postgres"),
+        "password": os.getenv("DB_PASSWORD", "11111"),
+        "port": int(os.getenv("DB_PORT", 5432)),
     }
 
     table_name = "example_table"
