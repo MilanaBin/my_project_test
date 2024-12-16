@@ -1,31 +1,20 @@
-name: CI Pipeline for Local Database
+  stages:
+      - test
 
-on:
-  push:
-    branches:
-      - main
+  services:
+      - postgres:latest
 
-jobs:
-  pre_migration:
-    runs-on: ubuntu-latest
-
-    env:  # Объявляем переменные окружения глобально для всех шагов
-      DB_HOST: localhost
+  variables:
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: 11111
       DB_NAME: postgres
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip libpq-dev
-          pip3 install psycopg2-binary
-
-      - name: Run test script
-        run: |
-          python3 src/my_project_test/test_connection.py
+  test_connection:
+      stage: test
+      before_script:
+        - pip install psycopg2
+        - until pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; do echo "Waiting for PostgreSQL..."; sleep 2; done
+      script:
+        - python3 src/my_project_test/test_connection.py

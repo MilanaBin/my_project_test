@@ -1,22 +1,35 @@
 import psycopg2
-import os
+from psycopg2 import OperationalError
+
+# Конфигурация подключения
+db_config = {
+    "host": "localhost",
+    "dbname": "postgres",
+    "user": "postgres",
+    "password": "11111",
+    "port": 5432,
+}
 
 
-def main():
+def check_connection(config):
     try:
-        conn = psycopg2.connect(
-            host=os.getenv("DB_HOST", "localhost"),
-            port=os.getenv("DB_PORT", "5432"),
-            database=os.getenv("DB_NAME"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-        )
-        print("✅ Successfully connected to PostgreSQL")
-        conn.close()
+        # Подключение к базе данных PostgreSQL
+        connection = psycopg2.connect(**config)
+
+        # Проверка успешного подключения
+        cursor = connection.cursor()
+        cursor.execute("SELECT 1;")
+        cursor.fetchone()
+        print("Connection successful")
+
+        # Закрытие соединения
+        cursor.close()
+        connection.close()
+    except OperationalError as e:
+        print(f"Connection failed: {e}")
     except Exception as e:
-        print("❌ Connection failed:", e)
-        raise SystemExit(1)
+        print(f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
-    main()
+    check_connection(db_config)
