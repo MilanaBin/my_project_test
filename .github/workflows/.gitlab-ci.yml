@@ -1,4 +1,4 @@
-name: CI Pipeline for PostgreSQL with Docker
+name: CI Pipeline for PostgreSQL without Docker
 
 on:
   push:
@@ -7,26 +7,11 @@ on:
 
 jobs:
   pre_migration:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Используем стандартный Ubuntu агент
 
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5433:5432  # Порт контейнера 5432 на хосте 5433
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 11111
-          POSTGRES_DB: postgres
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=10s
-          --health-retries=10
-
-    env:
-      DB_HOST: postgres  # Используйте имя сервиса вместо localhost
-      DB_PORT: 5432  # Порт контейнера
+    env:  # Объявляем переменные окружения глобально для всех шагов
+      DB_HOST: localhost
+      DB_PORT: 5433  # Указываем порт PostgreSQL, который у вас настроен
       DB_USER: postgres
       DB_PASSWORD: 11111
       DB_NAME: postgres
